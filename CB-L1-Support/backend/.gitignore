@@ -1,0 +1,19 @@
+.env
+
+# Python virtual environment.
+.venv/
+
+# Node dependencies.
+node_modules/
+
+# Ignore the data/ folder by default, but ship the artifacts the chatbot needs
+# at serve time so Render (which deploys from Git) has them in the image.
+data/*
+!data/chatbot/
+!data/dashboard_data.json
+!data/llm_analysis.json
+!data/raw_defects.json
+
+output/
+__pycache__/
+*.pyc

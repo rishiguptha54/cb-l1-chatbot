@@ -1,0 +1,41 @@
+{
+  "eom": [
+    "end of month",
+    "eom publish",
+    "publish"
+  ],
+  "ff": [
+    "feature flag",
+    "flag"
+  ],
+  "find api": [
+    "findapi",
+    "find-api"
+  ],
+  "rc": [
+    "root cause"
+  ],
+  "prod": [
+    "production"
+  ],
+  "config": [
+    "configuration",
+    "setting"
+  ],
+  "ui": [
+    "dashboard",
+    "widget",
+    "screen",
+    "frontend"
+  ],
+  "sync": [
+    "synchronization",
+    "integration"
+  ],
+  "ad": [
+    "active directory"
+  ],
+  "sfdc": [
+    "salesforce"
+  ]
+}

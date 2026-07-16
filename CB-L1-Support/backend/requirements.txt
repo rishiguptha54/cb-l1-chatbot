@@ -1,0 +1,42 @@
+# Defect Dashboard + Chatbot - Dependencies
+# Install with: pip install -r requirements.txt
+
+# ── Shared ──
+python-dotenv>=1.0.0
+openai>=1.0.0
+
+# HTTP client for LLM provider calls and the external documentation RAG service.
+httpx>=0.23.0
+
+# ── Chatbot: API ──
+fastapi>=0.110.0
+uvicorn[standard]>=0.29.0
+pydantic>=2.0.0
+python-multipart>=0.0.9
+
+# ── Chatbot: retrieval / embeddings ──
+numpy>=1.24.0
+faiss-cpu>=1.7.4
+
+# Local embedding fallback (heavy: pulls in torch). Required only when an Azure
+# OpenAI embedding deployment is NOT configured.
+sentence-transformers>=2.2.2
+
+# ── Document-RAG pipeline (rag_docs) ──
+# In-process retrieval against the Qdrant document knowledge base.
+# Pinned to the versions the pipeline was developed/validated against so it
+# behaves identically to the original RAG project.
+qdrant-client==1.18.0
+langchain==1.3.2
+langchain-core==1.4.0
+langchain-openai==1.2.2
+langchain-text-splitters==1.1.2
+
+# On-demand PDF ingestion (header "upload documentation" button): parses PDFs
+# via the LlamaParse cloud API (requires LLAMA_CLOUD_API_KEY).
+llama-parse==0.6.94
+llama-cloud==0.1.46
+llama-cloud-services==0.6.94
+llama-index-core==0.14.22
+llama-index-instrumentation==0.5.0
+llama-index-workflows==2.20.0

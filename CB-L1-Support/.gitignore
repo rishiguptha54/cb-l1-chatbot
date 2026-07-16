@@ -1,0 +1,35 @@
+# ── Python / backend ──
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Secrets — never commit real credentials.
+backend/.env
+.env
+*.env.local
+
+# Built frontend output served by the backend. Committed intentionally: the
+# Render deploy uses a native Python runtime (no Node/Docker), so the SPA must
+# be pre-built locally and checked in before each deploy — run
+# `npm run build` in frontend/ and commit the result whenever the UI changes.
+# backend/api/static/
+
+# ── Node / frontend ──
+node_modules/
+frontend/dist/
+frontend/.vite/
+*.tsbuildinfo
+
+# ── Editor / OS ──
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/extensions.json
+
+# ── Logs ──
+*.log
+npm-debug.log*

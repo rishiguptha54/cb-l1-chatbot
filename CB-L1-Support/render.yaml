@@ -1,0 +1,100 @@
+# Render Blueprint for the CB L1 Support Chatbot.
+#
+# Deploy: connect this repo in the Render dashboard → "New +" → "Blueprint",
+# or run `render blueprint launch`.
+#
+# Uses Render's NATIVE Python runtime (not Docker) so the Free instance type
+# works without a payment method on file — Render's Docker runtime requires
+# card verification even for free instances; native runtimes do not.
+#
+# Because the native runtime has no Node/npm, the frontend SPA is pre-built
+# locally and committed to backend/api/static (served by the same FastAPI app
+# as the API — single Web Service, single origin, no CORS/proxy split).
+# Whenever the UI changes: `cd frontend && npm run build`, then commit the
+# updated backend/api/static/ before pushing.
+#
+# Secrets marked `sync: false` are NOT stored here — Render will prompt for
+# them once in the dashboard after the first Blueprint sync.
+#
+# No `plan` is set below, so Render defaults to the Free instance type.
+
+services:
+  - type: web
+    name: cb-l1-support-chatbot
+    runtime: python
+    region: oregon
+    rootDir: backend
+    buildCommand: pip install -r requirements-deploy.txt
+    startCommand: uvicorn api.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.10
+      # ── LLM provider: Azure OpenAI (production standard — chat + embeddings
+      # both run on the same Azure OpenAI resource). Requires the deployed
+      # service to have network access to the Azure endpoint below — if
+      # deploying somewhere without that reachability (e.g. Render's public
+      # workers, off the corporate network), switch these four back to
+      # "github" (publicly reachable, see git history for that config). ──
+      - key: LLM_PROVIDER
+        value: azure
+      - key: EMBED_PROVIDER
+        value: azure
+      - key: RAG_LLM_PROVIDER
+        value: azure
+      - key: RAG_EMBED_PROVIDER
+        value: azure
+      - key: USE_LLM
+        value: "true"
+      - key: USE_AZURE_OPENAI
+        value: "true"
+      - key: USE_RAG_DOCS
+        value: "true"
+      - key: RAG_TOP_K
+        value: "6"
+      - key: RAG_TIMEOUT
+        value: "60"
+      - key: AZURE_OPENAI_API_VERSION
+        value: "2025-01-01-preview"
+
+      # ── Safety / behavior toggles (mirror backend/config.py defaults) ──
+      - key: MASK_SENSITIVE_DATA
+        value: "true"
+      - key: CHATBOT_EXCLUDE_CANCELLED
+        value: "true"
+      - key: JIRA_URL
+        value: https://honeywell.atlassian.net
+
+      # ── Secrets — set these in the Render dashboard after first deploy ──
+      - key: QDRANT_URL
+        sync: false
+      - key: QDRANT_API_KEY
+        sync: false
+      - key: QDRANT_COLLECTION
+        sync: false
+      # Defect knowledge-base collection — SAME Qdrant cluster as
+      # QDRANT_COLLECTION above, kept in a separate collection.
+      - key: DEFECT_QDRANT_COLLECTION
+        sync: false
+      # On-demand PDF ingestion (header upload button) — free tier at
+      # https://cloud.llamaindex.ai
+      - key: LLAMA_CLOUD_API_KEY
+        sync: false
+      - key: JIRA_USERNAME
+        sync: false
+      - key: JIRA_API_TOKEN
+        sync: false
+      # ── Azure OpenAI — the active provider for both chat and embeddings ──
+      - key: AZURE_OPENAI_ENDPOINT
+        sync: false
+      - key: AZURE_OPENAI_API_KEY
+        sync: false
+      - key: AZURE_OPENAI_CHAT_DEPLOYMENT
+        sync: false
+      - key: AZURE_OPENAI_EMBEDDING_DEPLOYMENT
+        sync: false
+      # Optional fallback provider — only needed if you ever switch
+      # LLM_PROVIDER/RAG_LLM_PROVIDER back to "github" or "copilot".
+      - key: GITHUB_TOKEN
+        sync: false

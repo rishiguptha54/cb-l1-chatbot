@@ -1,0 +1,27 @@
+# Keep the Docker build context small and never bake secrets/dev artifacts
+# into the image (this applies even to files already excluded by .gitignore,
+# since Docker reads straight from the local filesystem).
+
+.git/
+.github/
+
+**/__pycache__/
+**/*.pyc
+.venv/
+venv/
+
+**/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Secrets — must never be baked into an image layer.
+backend/.env
+.env
+*.env.local
+
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+
+README.md

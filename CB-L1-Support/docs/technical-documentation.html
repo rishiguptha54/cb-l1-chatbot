@@ -1,0 +1,1433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CB-L1 Support Chatbot — Technical Documentation</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --fg: #1a1a2e;
+      --accent: #0f3460;
+      --accent2: #16213e;
+      --code-bg: #f4f4f8;
+      --border: #d0d5dd;
+      --section-bg: #fafbfc;
+      --highlight: #e2ecf6;
+      --table-head: #0f3460;
+      --table-head-fg: #ffffff;
+      --tag-bg: #e8f0fe;
+      --tag-fg: #1a73e8;
+      --warn-bg: #fff3cd;
+      --warn-fg: #856404;
+      --good-bg: #d4edda;
+      --good-fg: #155724;
+      --bad-bg: #f8d7da;
+      --bad-fg: #721c24;
+      --info-bg: #d1ecf1;
+      --info-fg: #0c5460;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--fg);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+    /* ─── Top banner ──────────────────────────────────────────── */
+    .banner {
+      background: linear-gradient(135deg, var(--accent2), var(--accent));
+      color: #fff;
+      padding: 3rem 2rem 2.5rem;
+      text-align: center;
+    }
+    .banner h1 { font-size: 2.2rem; font-weight: 700; letter-spacing: -0.5px; }
+    .banner .subtitle { opacity: 0.85; margin-top: 0.5rem; font-size: 1.05rem; }
+    .banner .meta { margin-top: 1rem; font-size: 0.85rem; opacity: 0.7; }
+    /* ─── Layout ──────────────────────────────────────────────── */
+    .wrapper { display: flex; min-height: calc(100vh - 180px); }
+    nav.sidebar {
+      width: 280px;
+      min-width: 280px;
+      background: var(--section-bg);
+      border-right: 1px solid var(--border);
+      padding: 1.5rem 1rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      font-size: 0.88rem;
+    }
+    nav.sidebar h3 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; color: #888; margin: 1.2rem 0 0.4rem; }
+    nav.sidebar a {
+      display: block;
+      padding: 0.25rem 0.5rem;
+      color: var(--accent);
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background 0.15s;
+    }
+    nav.sidebar a:hover { background: var(--highlight); }
+    main { flex: 1; padding: 2rem 3rem 4rem; max-width: 960px; }
+    /* ─── Sections ────────────────────────────────────────────── */
+    section { margin-bottom: 3rem; }
+    h2 {
+      font-size: 1.55rem;
+      border-bottom: 2px solid var(--accent);
+      padding-bottom: 0.4rem;
+      margin-bottom: 1rem;
+      color: var(--accent2);
+    }
+    h3 { font-size: 1.2rem; margin: 1.5rem 0 0.6rem; color: var(--accent); }
+    h4 { font-size: 1.05rem; margin: 1rem 0 0.4rem; }
+    p, li { margin-bottom: 0.5rem; }
+    ul, ol { padding-left: 1.5rem; }
+    code {
+      background: var(--code-bg);
+      padding: 2px 5px;
+      border-radius: 3px;
+      font-size: 0.92em;
+      font-family: 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-x: auto;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      margin: 0.8rem 0 1.2rem;
+    }
+    pre code { background: transparent; padding: 0; }
+    /* ─── Tables ──────────────────────────────────────────────── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0 1.5rem;
+      font-size: 0.9rem;
+    }
+    th {
+      background: var(--table-head);
+      color: var(--table-head-fg);
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      font-weight: 600;
+    }
+    td {
+      border-bottom: 1px solid var(--border);
+      padding: 0.55rem 0.8rem;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background: var(--section-bg); }
+    /* ─── Callout boxes ───────────────────────────────────────── */
+    .callout {
+      border-left: 4px solid;
+      padding: 0.8rem 1rem;
+      border-radius: 4px;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+    }
+    .callout.info    { background: var(--info-bg);  border-color: var(--info-fg);  color: var(--info-fg); }
+    .callout.warn    { background: var(--warn-bg);  border-color: var(--warn-fg);  color: var(--warn-fg); }
+    .callout.good    { background: var(--good-bg);  border-color: var(--good-fg);  color: var(--good-fg); }
+    .callout.bad     { background: var(--bad-bg);   border-color: var(--bad-fg);   color: var(--bad-fg); }
+    /* ─── Tags ────────────────────────────────────────────────── */
+    .tag {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--tag-fg);
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-right: 4px;
+    }
+    /* ─── Diagram box ─────────────────────────────────────────── */
+    .diagram-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.2rem;
+      font-family: 'Cascadia Code', Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 1rem 0 1.5rem;
+    }
+    /* ─── File tree ───────────────────────────────────────────── */
+    .file-tree {
+      font-family: 'Cascadia Code', Consolas, monospace;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      margin: 0.8rem 0 1.2rem;
+    }
+    .file-tree .folder { color: var(--accent); font-weight: 600; }
+    .file-tree .file   { color: #555; }
+    /* ─── Responsive ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .wrapper { flex-direction: column; }
+      nav.sidebar { width: 100%; min-width: 100%; height: auto; position: static; border-right: none; border-bottom: 1px solid var(--border); }
+      main { padding: 1.5rem 1rem 3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- BANNER                                                         -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<header class="banner">
+  <h1>CB-L1 Support Chatbot</h1>
+  <div class="subtitle">Technical Documentation — Complete System Reference</div>
+  <div class="meta">Version 1.0.0 &nbsp;|&nbsp; Generated 2026-07-16 &nbsp;|&nbsp; Honeywell Connected Buildings</div>
+</header>
+
+<div class="wrapper">
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- SIDEBAR NAVIGATION                                             -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<nav class="sidebar">
+  <h3>Overview</h3>
+  <a href="#overview">System Overview</a>
+  <a href="#architecture">Architecture Diagram</a>
+  <a href="#project-structure">Project Structure</a>
+  <a href="#tech-stack">Technology Stack</a>
+
+  <h3>Backend</h3>
+  <a href="#config">Configuration (config.py)</a>
+  <a href="#llm-provider">LLM Provider Layer</a>
+  <a href="#api-layer">API Layer (FastAPI)</a>
+  <a href="#api-endpoints">API Endpoints</a>
+
+  <h3>Chatbot Pipeline</h3>
+  <a href="#intent-router">Intent Router</a>
+  <a href="#retriever">Hybrid Retriever</a>
+  <a href="#answer-generator">Answer Generator</a>
+  <a href="#defect-qa">QA Orchestrator</a>
+  <a href="#prompts">Prompt Engineering</a>
+
+  <h3>Knowledge Base</h3>
+  <a href="#kb-pipeline">Build Pipeline</a>
+  <a href="#schemas">Data Schemas</a>
+  <a href="#build-chunks">Chunking Strategy</a>
+  <a href="#build-embeddings">Embedding Pipeline</a>
+  <a href="#vector-store-defect">Defect Vector Store</a>
+  <a href="#defect-ingest">On-Demand Ingestion</a>
+
+  <h3>Document RAG</h3>
+  <a href="#rag-overview">RAG Overview</a>
+  <a href="#rag-pipeline">Pipeline Architecture</a>
+  <a href="#rag-document-ingestor">Document Ingestor</a>
+  <a href="#rag-semantic-chunker">Semantic Chunker</a>
+  <a href="#rag-query-router">Query Router</a>
+  <a href="#rag-agent">RAG Agent</a>
+  <a href="#rag-client">RAG Client Bridge</a>
+
+  <h3>Frontend</h3>
+  <a href="#frontend-overview">Frontend Overview</a>
+  <a href="#frontend-state">State Management</a>
+  <a href="#frontend-api">API Service Layer</a>
+  <a href="#frontend-streaming">SSE Streaming</a>
+
+  <h3>Security &amp; Ops</h3>
+  <a href="#security">Security Review</a>
+  <a href="#deployment">Deployment</a>
+  <a href="#env-vars">Environment Variables</a>
+  <a href="#observations">Code Observations</a>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!-- MAIN CONTENT                                                   -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<main>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="overview">
+  <h2>1. System Overview</h2>
+  <p>
+    <strong>CB-L1 Support</strong> is an AI-powered <em>Defect Intelligence Assistant</em> designed for
+    Honeywell's Connected Buildings L1 support team. It answers defect root-cause and fix
+    questions by combining two knowledge sources:
+  </p>
+  <ol>
+    <li><strong>Historical Jira Defects</strong> — enriched, chunked, and indexed in a Qdrant vector database with hybrid retrieval (semantic + BM25 keyword + metadata scoring).</li>
+    <li><strong>Product Documentation</strong> — PDFs parsed via LlamaParse, semantically chunked, and indexed in a separate Qdrant collection with a full RAG pipeline.</li>
+  </ol>
+  <p>
+    Answers are streamed to the user in real-time via Server-Sent Events (SSE) with clear source
+    attribution (defect KB vs. documentation) and include structured sections: root cause,
+    fix steps, similar fixed defects, and optional documentation guidance.
+  </p>
+
+  <div class="callout info">
+    <strong>Key design principle:</strong> The system is <em>read-only</em> to Jira
+    (<code>READ_ONLY_MODE = True</code>). It never writes back to Jira, only reads.
+    Sensitive data (emails, IPs, tokens) is automatically masked via PII filters.
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="architecture">
+  <h2>2. Architecture Diagram</h2>
+  <div class="diagram-box">┌──────────────────────────────────────────────────────────────────────┐
+│                    FRONTEND (React 18 + TypeScript + Vite)            │
+│                                                                        │
+│  LandingPage ──→ ChatPage ──→ ChatWindow ──→ ChatInput               │
+│                                  │                                     │
+│  ChatProvider (Context API)      │   SSE Stream Consumer               │
+│  ├─ Conversation CRUD            │   ├─ askStream() → EventSource      │
+│  ├─ Multi-conversation state     │   ├─ ingestPdfStream()              │
+│  └─ LocalStorage persistence     │   └─ addDefectStream()              │
+└──────────────────────┬───────────────────────────────────────────────┘
+                       │  POST /api/ask/stream  (SSE)
+                       │  POST /api/ask         (JSON)
+                       │  GET  /health
+                       │  POST /api/rag/ingest/stream
+                       │  POST /api/defects/add/stream
+                       ▼
+┌──────────────────────────────────────────────────────────────────────┐
+│                    BACKEND (FastAPI + Python 3.12)                    │
+│                                                                        │
+│  ┌─ api/app.py ──────────────────────────────────────────────────┐   │
+│  │  FastAPI app factory                                          │   │
+│  │  ├─ Lifespan: warm KB + Qdrant + LLM at startup              │   │
+│  │  ├─ CORS middleware (allow all origins)                       │   │
+│  │  ├─ Static file serving (built React SPA)                     │   │
+│  │  └─ SPA catch-all route                                       │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+│                                                                        │
+│  ┌─ api/routes.py ───────────────────────────────────────────────┐   │
+│  │  API endpoints                                                 │   │
+│  │  ├─ GET  /health          (liveness + diagnostics)             │   │
+│  │  ├─ POST /api/ask         (non-streaming answer)               │   │
+│  │  ├─ POST /api/ask/stream  (SSE streaming answer)               │   │
+│  │  ├─ POST /api/rag/ingest  (PDF upload → doc RAG)               │   │
+│  │  ├─ POST /api/defects/add (single defect ingestion)            │   │
+│  │  └─ POST /api/defects/add-jql (bulk JQL ingestion)             │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+│                          │                                             │
+│  ┌───────────────────────▼───────────────────────────────────────┐   │
+│  │  defect_qa.py — QA Orchestrator                               │   │
+│  │  ├─ Intent classification (intent_router.py)                  │   │
+│  │  ├─ Hybrid retrieval (retriever.py → Qdrant)                  │   │
+│  │  ├─ LLM synthesis (answer_generator.py)                       │   │
+│  │  ├─ Optional doc RAG fusion (rag_client.py → rag_docs/)       │   │
+│  │  └─ Interactive section picker (options flow)                  │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+│                          │                                             │
+│  ┌───────────────────────▼───────────────────────────────────────┐   │
+│  │  llm_provider.py — Provider-Agnostic LLM Abstraction         │   │
+│  │  ├─ Azure OpenAI  (production)                                │   │
+│  │  ├─ GitHub Models  (fallback, public endpoint)                │   │
+│  │  └─ GitHub Copilot (alternative)                              │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+│                          │                                             │
+│  ┌───────────────────────▼───────────────────────────────────────┐   │
+│  │  Qdrant Cloud (shared cluster, two collections)               │   │
+│  │  ├─ "defect"         — defect chunks (3072-dim, cosine)       │   │
+│  │  └─ "rag_collection" — document chunks (3072-dim, cosine)    │   │
+│  └───────────────────────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────────────┘</div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="project-structure">
+  <h2>3. Project Structure</h2>
+  <div class="file-tree">
+<span class="folder">CB-L1-Support/</span>
+├── <span class="file">Dockerfile</span>              <em>— Optional Docker build (includes frontend build step)</em>
+├── <span class="file">render.yaml</span>             <em>— Render.com Blueprint (Python native runtime)</em>
+├── <span class="folder">backend/</span>
+│   ├── <span class="file">config.py</span>           <em>— All configuration: env vars, paths, constants</em>
+│   ├── <span class="file">llm_provider.py</span>     <em>— Provider-agnostic LLM abstraction (Azure/GitHub/Copilot)</em>
+│   ├── <span class="file">run_chatbot.py</span>      <em>— CLI entry point: --build / --serve / --ask</em>
+│   ├── <span class="file">requirements.txt</span>    <em>— Full dev dependencies (includes sentence-transformers)</em>
+│   ├── <span class="file">requirements-deploy.txt</span> <em>— Slim production dependencies</em>
+│   ├── <span class="folder">api/</span>
+│   │   ├── <span class="file">app.py</span>          <em>— FastAPI app factory + SPA serving</em>
+│   │   ├── <span class="file">routes.py</span>       <em>— All API endpoints</em>
+│   │   └── <span class="folder">static/</span>       <em>— Pre-built React SPA (committed to repo)</em>
+│   ├── <span class="folder">chatbot/</span>
+│   │   ├── <span class="file">intent_router.py</span>    <em>— Deterministic question classifier</em>
+│   │   ├── <span class="file">retriever.py</span>        <em>— Hybrid retriever (Qdrant semantic + keyword + BM25)</em>
+│   │   ├── <span class="file">answer_generator.py</span> <em>— LLM synthesis + deterministic fallback</em>
+│   │   ├── <span class="file">defect_qa.py</span>        <em>— Top-level QA orchestrator</em>
+│   │   ├── <span class="file">prompts.py</span>          <em>— System + user prompt templates</em>
+│   │   ├── <span class="file">rag_client.py</span>       <em>— In-process doc RAG bridge</em>
+│   │   ├── <span class="file">schemas.py</span>          <em>— DefectRecord / DefectChunk dataclasses</em>
+│   │   ├── <span class="file">utils.py</span>            <em>— Shared helpers: PII masking, tokenization, Jira compat</em>
+│   │   ├── <span class="file">build_knowledge_base.py</span> <em>— Stage 1-4: raw Jira → enriched KB</em>
+│   │   ├── <span class="file">build_chunks.py</span>         <em>— Stage 5: KB → typed chunks (5 per defect)</em>
+│   │   ├── <span class="file">build_embeddings.py</span>     <em>— Stage 6: chunks → vectors (Azure/local)</em>
+│   │   ├── <span class="file">build_indexes.py</span>        <em>— Stage 7: FAISS index (legacy, now Qdrant)</em>
+│   │   ├── <span class="file">defect_vector_store.py</span>  <em>— Qdrant CRUD for defect collection</em>
+│   │   ├── <span class="file">defect_ingest.py</span>        <em>— On-demand single/bulk defect ingestion</em>
+│   │   └── <span class="file">migrate_defects_qdrant.py</span> <em>— Bulk migration to Qdrant</em>
+│   ├── <span class="folder">rag_docs/</span>
+│   │   ├── <span class="file">__init__.py</span>         <em>— Package exports</em>
+│   │   ├── <span class="file">pipeline.py</span>         <em>— Builder + singleton for the RAG pipeline</em>
+│   │   ├── <span class="file">llm_factory.py</span>      <em>— Provider selection for doc RAG (Azure/Copilot/GitHub)</em>
+│   │   ├── <span class="file">vector_store.py</span>     <em>— Qdrant CRUD for doc collection</em>
+│   │   ├── <span class="file">document_ingestor.py</span> <em>— LlamaParse PDF → structured elements</em>
+│   │   ├── <span class="file">semantic_chunker.py</span>  <em>— Heading-aware text + table chunking</em>
+│   │   ├── <span class="file">table_parser.py</span>      <em>— Markdown table → row-level chunks</em>
+│   │   ├── <span class="file">query_router.py</span>      <em>— Feature-flag / widget / text / hybrid routing</em>
+│   │   ├── <span class="file">query_processor.py</span>   <em>— Normalizer + Enhancer + Fallback</em>
+│   │   ├── <span class="file">rag_agent.py</span>         <em>— Full RAG orchestrator (9-stage pipeline)</em>
+│   │   ├── <span class="file">answer_generator.py</span>  <em>— LLM answer synthesis with citations</em>
+│   │   ├── <span class="file">models.py</span>            <em>— Data models for tables/chunks</em>
+│   │   └── <span class="file">ingest.py</span>            <em>— On-demand PDF ingestion pipeline</em>
+│   └── <span class="folder">data/chatbot/</span>        <em>— Persisted KB artifacts (JSON/JSONL/CSV)</em>
+├── <span class="folder">frontend/</span>
+│   ├── <span class="file">package.json</span>       <em>— React 18 + Vite + TailwindCSS</em>
+│   ├── <span class="file">vite.config.ts</span>     <em>— Dev proxy to FastAPI backend</em>
+│   └── <span class="folder">src/</span>
+│       ├── <span class="file">App.tsx</span>          <em>— Root: QueryClient + Theme + Router + ChatProvider</em>
+│       ├── <span class="folder">features/chat/</span>  <em>— ChatProvider (core state machine)</em>
+│       ├── <span class="folder">components/</span>     <em>— UI components (chat, landing, layout, ui)</em>
+│       ├── <span class="folder">services/</span>       <em>— API client + React Query config</em>
+│       ├── <span class="folder">types/</span>          <em>— TypeScript domain types</em>
+│       └── <span class="folder">utils/</span>          <em>— Helpers (cn, format, id, storage)</em>
+└── <span class="folder">docs/</span>                <em>— Documentation assets</em></div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="tech-stack">
+  <h2>4. Technology Stack</h2>
+  <table>
+    <tr><th>Layer</th><th>Technology</th><th>Version</th><th>Purpose</th></tr>
+    <tr><td>Backend Framework</td><td>FastAPI + Uvicorn</td><td>≥ 0.110</td><td>Async HTTP API server with SSE streaming</td></tr>
+    <tr><td>Language</td><td>Python</td><td>3.12</td><td>Backend runtime</td></tr>
+    <tr><td>LLM (Production)</td><td>Azure OpenAI</td><td>GPT-4o</td><td>Chat completions + embedding generation</td></tr>
+    <tr><td>LLM (Fallback)</td><td>GitHub Models / Copilot</td><td>—</td><td>Publicly reachable fallback providers</td></tr>
+    <tr><td>Embeddings</td><td>text-embedding-3-large</td><td>3072-dim</td><td>Semantic vector embeddings</td></tr>
+    <tr><td>Vector Database</td><td>Qdrant Cloud</td><td>1.18.0</td><td>Cosine similarity search + full-text index</td></tr>
+    <tr><td>PDF Parsing</td><td>LlamaParse</td><td>0.6.94</td><td>Cloud-based PDF → structured Markdown</td></tr>
+    <tr><td>Text Splitting</td><td>LangChain Text Splitters</td><td>1.1.2</td><td>Heading-aware semantic chunking</td></tr>
+    <tr><td>Frontend Framework</td><td>React</td><td>18.3</td><td>Component-based SPA</td></tr>
+    <tr><td>Build Tool</td><td>Vite</td><td>6.0</td><td>Fast dev server + production bundler</td></tr>
+    <tr><td>Styling</td><td>TailwindCSS</td><td>3.4</td><td>Utility-first CSS framework</td></tr>
+    <tr><td>State Management</td><td>React Context + React Query</td><td>5.x</td><td>Chat state + server state caching</td></tr>
+    <tr><td>Markdown Rendering</td><td>react-markdown + remark-gfm</td><td>9.x</td><td>GitHub-flavored Markdown with syntax highlighting</td></tr>
+    <tr><td>Animation</td><td>Framer Motion</td><td>11.x</td><td>Page transitions and UI animations</td></tr>
+    <tr><td>Deployment</td><td>Render (Free Tier)</td><td>—</td><td>Native Python runtime, auto-deploy from Git</td></tr>
+  </table>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  BACKEND DETAILS                                               -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section id="config">
+  <h2>5. Configuration Module (<code>config.py</code>)</h2>
+  <p>
+    Centralizes all configuration, loading secrets from a <code>.env</code> file via
+    <code>python-dotenv</code>. Never committed. Configuration is split into two logical blocks:
+  </p>
+
+  <h3>5.1 Dashboard Pipeline Configuration</h3>
+  <table>
+    <tr><th>Setting</th><th>Source</th><th>Description</th></tr>
+    <tr><td><code>JIRA_URL</code></td><td>env</td><td>Jira Cloud base URL (default: honeywell.atlassian.net)</td></tr>
+    <tr><td><code>JIRA_USERNAME</code></td><td>env</td><td>Jira user email for API auth</td></tr>
+    <tr><td><code>JIRA_API_TOKEN</code></td><td>env</td><td>Jira API token (Basic auth)</td></tr>
+    <tr><td><code>READ_ONLY_MODE</code></td><td>hardcoded</td><td>Always <code>True</code> — never writes to Jira</td></tr>
+    <tr><td><code>DEFECT_JQL</code></td><td>hardcoded</td><td>JQL filter: production customer-reported defects since 2025</td></tr>
+    <tr><td><code>SLA_TARGETS_DAYS</code></td><td>hardcoded</td><td>SLA thresholds by priority (Critical=3d, High=7d, Normal=14d, Low=30d)</td></tr>
+    <tr><td><code>CFP_BANDS</code></td><td>hardcoded</td><td>Customer Fix Priority banding (CFP1 ≥400, CFP2 ≥150, CFP3 ≥80, CFP4 &lt;80)</td></tr>
+  </table>
+
+  <h3>5.2 Chatbot Configuration</h3>
+  <table>
+    <tr><th>Setting</th><th>Default</th><th>Description</th></tr>
+    <tr><td><code>USE_LLM</code></td><td><code>true</code></td><td>Master LLM switch; when false, deterministic fallbacks only</td></tr>
+    <tr><td><code>USE_AZURE_OPENAI</code></td><td><code>true</code></td><td>Use Azure OpenAI as the chat backend</td></tr>
+    <tr><td><code>LLM_PROVIDER</code></td><td><code>azure</code></td><td>Active LLM provider: <code>azure</code>, <code>github</code>, or <code>copilot</code></td></tr>
+    <tr><td><code>TOP_K_RESULTS</code></td><td><code>8</code></td><td>Maximum defects returned per retrieval query</td></tr>
+    <tr><td><code>RELEVANCE_MIN_SCORE</code></td><td><code>0.45</code></td><td>Absolute floor for relevance filtering</td></tr>
+    <tr><td><code>RELEVANCE_REL_MARGIN</code></td><td><code>0.75</code></td><td>Relative margin vs. best match for tail trimming</td></tr>
+    <tr><td><code>MASK_SENSITIVE_DATA</code></td><td><code>true</code></td><td>Enable PII masking (emails, IPs, tokens, GUIDs)</td></tr>
+    <tr><td><code>CHATBOT_EXCLUDE_CANCELLED</code></td><td><code>true</code></td><td>Exclude cancelled/won't-fix defects from KB</td></tr>
+    <tr><td><code>USE_RAG_DOCS</code></td><td><code>true</code></td><td>Enable documentation RAG integration</td></tr>
+    <tr><td><code>RAG_TIMEOUT</code></td><td><code>120</code>s</td><td>Hard timeout for the documentation RAG call</td></tr>
+    <tr><td><code>DEFECT_QDRANT_COLLECTION</code></td><td><code>defect</code></td><td>Qdrant collection name for defect chunks</td></tr>
+    <tr><td><code>DEFECT_VECTOR_DIM</code></td><td><code>3072</code></td><td>Embedding dimension (matches text-embedding-3-large)</td></tr>
+  </table>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="llm-provider">
+  <h2>6. LLM Provider Abstraction (<code>llm_provider.py</code>)</h2>
+  <p>
+    A unified API layer that makes all LLM calls provider-agnostic. A single
+    <code>LLM_PROVIDER</code> setting switches the backend without changing any calling code.
+  </p>
+
+  <h3>6.1 Public Interface</h3>
+  <pre><code>from llm_provider import chat, embed, list_models, pick_model
+
+# Chat completion (with stage-based model selection)
+answer = chat(messages, stage="standard")           # → str
+tokens = chat(messages, stage="complex", stream=True)  # → Iterator[str]
+
+# Text embeddings
+vectors = embed(["text a", "text b"])               # → list[list[float]]
+
+# Model discovery
+models = list_models()        # → list[str] (discovered ∪ fallback)
+model  = pick_model("complex") # → str (best available for stage)</code></pre>
+
+  <h3>6.2 Stages &amp; Model Selection</h3>
+  <table>
+    <tr><th>Stage</th><th>Purpose</th><th>Model Preference</th></tr>
+    <tr><td><code>cheap</code></td><td>Fast, low-cost tasks (query bridge)</td><td>GPT-4o-mini → GPT-3.5</td></tr>
+    <tr><td><code>standard</code></td><td>Normal chat tasks</td><td>GPT-4o</td></tr>
+    <tr><td><code>complex</code></td><td>Diagnostic answer synthesis</td><td>GPT-4o → Claude 3.5</td></tr>
+    <tr><td><code>embedding</code></td><td>Text embeddings</td><td>text-embedding-3-large (3072-dim)</td></tr>
+  </table>
+
+  <h3>6.3 Provider Details</h3>
+  <table>
+    <tr><th>Provider</th><th>Endpoint</th><th>Auth</th><th>Features</th></tr>
+    <tr><td><code>azure</code></td><td>Customer Azure resource</td><td>API Key</td><td>Chat + Embeddings, corporate network only</td></tr>
+    <tr><td><code>github</code></td><td><code>models.inference.ai.azure.com</code></td><td>GITHUB_TOKEN</td><td>Chat + Embeddings, publicly reachable</td></tr>
+    <tr><td><code>copilot</code></td><td>Copilot API endpoint</td><td>COPILOT_TOKEN</td><td>Chat only (no 3072-dim embeddings)</td></tr>
+  </table>
+
+  <h3>6.4 Model Discovery</h3>
+  <p>
+    On first use, <code>_discover_models()</code> queries the provider's <code>/models</code>
+    endpoint to discover available model IDs. Results are cached via <code>@lru_cache</code>.
+    If discovery fails (corporate proxy, auth issues), a hardcoded fallback catalog is used.
+    Code-completion-only models are excluded automatically.
+  </p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="api-layer">
+  <h2>7. API Layer</h2>
+
+  <h3>7.1 Application Factory (<code>api/app.py</code>)</h3>
+  <p>The FastAPI application is created with a <code>lifespan</code> context manager that:</p>
+  <ol>
+    <li><strong>Warms the retriever singleton</strong> — loads the JSON knowledge base and connects to Qdrant once at boot (not per request).</li>
+    <li><strong>Checks RAG health</strong> — non-blocking reachability test for the documentation pipeline.</li>
+    <li><strong>Logs subsystem status</strong> — KB size, vector store readiness, LLM provider, RAG status.</li>
+  </ol>
+  <p>The app also serves the pre-built React SPA from <code>api/static/</code>. A catch-all route
+     serves <code>index.html</code> for all non-API paths (SPA client-side routing). The HTML shell
+     is served with <code>no-cache</code> headers so UI changes are immediately visible.</p>
+
+  <div class="callout warn">
+    <strong>CORS:</strong> Currently configured with <code>allow_origins=["*"]</code>. In production
+    behind Render's single-origin architecture this is benign (API and SPA share the same origin),
+    but should be tightened if the API is ever exposed separately.
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="api-endpoints">
+  <h2>8. API Endpoints Reference</h2>
+  <table>
+    <tr><th>Method</th><th>Path</th><th>Purpose</th><th>Response</th></tr>
+    <tr>
+      <td><span class="tag">GET</span></td>
+      <td><code>/health</code></td>
+      <td>Liveness/readiness check with diagnostics</td>
+      <td>JSON: <code>{status, service, timestamp, knowledge_base_loaded, vector_store_loaded, llm_enabled, llm_provider, rag_docs_enabled, top_k}</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag">GET</span></td>
+      <td><code>/health/rag</code></td>
+      <td>Diagnostic: test doc-RAG pipeline end-to-end</td>
+      <td>JSON: <code>{ok, error?}</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag">POST</span></td>
+      <td><code>/api/ask</code></td>
+      <td>Non-streaming answer</td>
+      <td>JSON: <code>{intent, answer, similar_defects[], mode?, options?}</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag">POST</span></td>
+      <td><code>/api/ask/stream</code></td>
+      <td>SSE streaming answer</td>
+      <td>SSE events: <code>meta → token* → sources → done</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag">POST</span></td>
+      <td><code>/api/rag/ingest</code></td>
+      <td>Upload PDF for doc RAG (sync)</td>
+      <td>JSON: <code>{status, chunks_created, ...}</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag">POST</span></td>
+      <td><code>/api/rag/ingest/stream</code></td>
+      <td>Upload PDF for doc RAG (SSE progress)</td>
+      <td>SSE events: <code>stage* → done</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag">POST</span></td>
+      <td><code>/api/defects/add</code></td>
+      <td>Ingest one Jira defect by key</td>
+      <td>JSON: <code>{status, issue_key, chunks, ...}</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag">POST</span></td>
+      <td><code>/api/defects/add/stream</code></td>
+      <td>Ingest one Jira defect (SSE progress)</td>
+      <td>SSE events: <code>stage* → done</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag">POST</span></td>
+      <td><code>/api/defects/add-jql</code></td>
+      <td>Bulk ingest defects by JQL query</td>
+      <td>JSON: <code>{status, count, chunks, ...}</code></td>
+    </tr>
+    <tr>
+      <td><span class="tag">POST</span></td>
+      <td><code>/api/defects/add-jql/stream</code></td>
+      <td>Bulk JQL ingest (SSE progress)</td>
+      <td>SSE events: <code>stage* → done</code></td>
+    </tr>
+  </table>
+
+  <h3>8.1 Ask Request Schema</h3>
+  <pre><code>{
+  "question": "How to fix EOM publish failure?",  // 1–2000 chars, required
+  "mode": "defect" | null,                        // routing hint (optional)
+  "history": [{"question": "...", "answer": "..."}], // last 4 turns (optional)
+  "sections": ["root_cause", "resolve", "similar"]   // option selection (optional)
+}</code></pre>
+
+  <h3>8.2 SSE Event Types</h3>
+  <table>
+    <tr><th>Event Type</th><th>Payload</th><th>Description</th></tr>
+    <tr><td><code>meta</code></td><td><code>{intent}</code></td><td>Classified intent (sent first)</td></tr>
+    <tr><td><code>options</code></td><td><code>{intent, options[], question}</code></td><td>Interactive section picker for defect questions</td></tr>
+    <tr><td><code>token</code></td><td><code>{text}</code></td><td>Incremental answer text (many events)</td></tr>
+    <tr><td><code>status</code></td><td><code>{text}</code></td><td>Transient progress note (e.g. "Searching documentation…")</td></tr>
+    <tr><td><code>sources</code></td><td><code>{similar_defects[]}</code></td><td>Retrieved evidence metadata</td></tr>
+    <tr><td><code>error</code></td><td><code>{message}</code></td><td>Error description</td></tr>
+    <tr><td><code>done</code></td><td><code>{}</code></td><td>Stream complete</td></tr>
+  </table>
+
+  <h3>8.3 Input Validation</h3>
+  <ul>
+    <li>Question: non-empty, max 2000 characters (Pydantic + manual check).</li>
+    <li>PDF upload: must be <code>.pdf</code>, non-empty, max 20 MB.</li>
+    <li>Defect key: 3–40 chars, validated against <code>[A-Z][A-Z0-9]+-\d+</code> regex.</li>
+    <li>JQL query: 3–2000 chars, validated server-side by Jira's own parser.</li>
+  </ul>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  CHATBOT PIPELINE                                              -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section id="intent-router">
+  <h2>9. Intent Router (<code>chatbot/intent_router.py</code>)</h2>
+  <p>
+    A <strong>deterministic-first</strong> classifier — no LLM call, pure rule-based. Classifies
+    every question into one of four intents in strict priority order:
+  </p>
+  <table>
+    <tr><th>Priority</th><th>Intent</th><th>Trigger</th><th>Example</th></tr>
+    <tr><td>1 (highest)</td><td><code>DEFECT_BY_KEY</code></td><td>Contains a Jira key (e.g. <code>HCBS-95506</code>)</td><td>"What's the root cause of HCBS-95506?"</td></tr>
+    <tr><td>2</td><td><code>SIMILAR_DEFECTS</code></td><td>Contains "similar defect", "like this", etc.</td><td>"Show similar fixed defects for login errors"</td></tr>
+    <tr><td>3</td><td><code>DEFECT_DIAGNOSTIC</code></td><td>Diagnostic cue words (50+ patterns)</td><td>"How to fix EOM publish failure?"</td></tr>
+    <tr><td>4</td><td><code>GENERAL_HELP</code></td><td>Greetings, capability questions (no tech terms)</td><td>"What can you do?"</td></tr>
+  </table>
+
+  <h3>9.1 Diagnostic Cue Patterns (50+ entries)</h3>
+  <p>Includes standard fix terms ("root cause", "how to fix", "workaround") AND symptom phrasings
+     ("not showing", "missing", "blank", "stuck", "crash", "incorrect") so symptom reports are
+     treated as defects, not generic questions.</p>
+
+  <h3>9.2 Fallback Logic</h3>
+  <p>If none of the above cues match:</p>
+  <ul>
+    <li>Short input (≤2 words) without tech terms → <code>GENERAL_HELP</code></li>
+    <li>Everything else → <code>DEFECT_DIAGNOSTIC</code> (the vast majority of questions are about defects)</li>
+  </ul>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="retriever">
+  <h2>10. Hybrid Retriever (<code>chatbot/retriever.py</code>)</h2>
+  <p>
+    The core retrieval engine. Combines <strong>four scoring signals</strong> over defect chunks
+    stored in the Qdrant "defect" collection and aggregates scores to the defect level.
+  </p>
+
+  <h3>10.1 Scoring Formula</h3>
+  <pre><code>final = 0.45 × semantic + 0.25 × keyword + 0.15 × metadata + 0.10 × quality + 0.05 × fixed_boost</code></pre>
+
+  <table>
+    <tr><th>Signal</th><th>Weight</th><th>Source</th><th>Description</th></tr>
+    <tr><td>Semantic</td><td>0.45</td><td>Qdrant vector search (cosine similarity)</td><td>60 candidates, scores clamped to [0,1]</td></tr>
+    <tr><td>Keyword</td><td>0.25</td><td>Qdrant full-text index + in-memory BM25</td><td>60 candidates, IDF-weighted term matching</td></tr>
+    <tr><td>Metadata</td><td>0.15</td><td>Query token overlap with structured fields</td><td>Components, labels, environment, fix_pattern, etc.</td></tr>
+    <tr><td>Quality</td><td>0.10</td><td>Pre-computed heuristic</td><td>Completeness score (root cause, fix, comments)</td></tr>
+    <tr><td>Fixed Boost</td><td>0.05</td><td>Resolution status</td><td>+0.05 for fixed defects, −0.15 for cancelled</td></tr>
+  </table>
+
+  <h3>10.2 Retrieval Flow</h3>
+  <ol>
+    <li><strong>Embed query</strong> — Convert user question to 3072-dim vector via <code>EmbeddingProvider</code>.</li>
+    <li><strong>Qdrant semantic search</strong> — 60 nearest-neighbor candidates by cosine similarity.</li>
+    <li><strong>Qdrant keyword search</strong> — 60 candidates via full-text index (top 8 query tokens).</li>
+    <li><strong>Merge &amp; deduplicate</strong> — Union by <code>chunk_id</code>; semantic hits retain vector score.</li>
+    <li><strong>BM25 re-scoring</strong> — Local IDF table (built at startup from KB) applied to keyword candidates.</li>
+    <li><strong>Defect-level aggregation</strong> — Group by <code>issue_key</code>, best chunk score wins.</li>
+    <li><strong>Relevance filtering</strong> — Drop defects below absolute floor (0.45) AND relative margin (0.75 × top score).</li>
+    <li><strong>Return top K</strong> — Sorted descending by final score.</li>
+  </ol>
+
+  <h3>10.3 Key Design Decisions</h3>
+  <ul>
+    <li><strong>Qdrant full-text index</strong> — Replaces a local BM25 index file, so new defects added via the "Add defect" button are immediately searchable without a rebuild.</li>
+    <li><strong>Incremental BM25 IDF</strong> — <code>add_lexical_doc()</code> folds new defects into the in-memory IDF table, avoiding staleness.</li>
+    <li><strong>Relevance guard</strong> — Prevents "forced" answers from weakly-matched defects. Returns empty list when nothing relevant is found, letting the answer layer report honestly.</li>
+    <li><strong>Exact key lookup</strong> — <code>DEFECT_BY_KEY</code> bypasses semantic search entirely; seeds similar defects from the target's own text.</li>
+  </ul>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="answer-generator">
+  <h2>11. Answer Generator (<code>chatbot/answer_generator.py</code>)</h2>
+  <p>
+    Two-path answer generation: LLM synthesis (primary) with a deterministic fallback.
+  </p>
+
+  <h3>11.1 LLM Path</h3>
+  <p>
+    Sends the user question + retrieved evidence to the <code>complex</code>-stage model
+    (GPT-4o) with a grounding system prompt that enforces:
+  </p>
+  <ul>
+    <li>Evidence-only answers — no invented keys, counts, or dates.</li>
+    <li>Commit to a root cause (never say "not provided" or "unclear").</li>
+    <li>Cite actual Jira keys from the provided context.</li>
+    <li>Fixed response structure: Root Causes → Fix History → Suggested Steps → Similar Defects table.</li>
+    <li>Temperature 0.2, max_tokens 1800.</li>
+  </ul>
+
+  <h3>11.2 Deterministic Fallback</h3>
+  <p>
+    When the LLM is disabled or fails, a template-based answer is built from the retrieved metadata.
+    Includes 12 fix-step templates mapped to the <code>fix_pattern</code> taxonomy:
+  </p>
+  <table>
+    <tr><th>Fix Pattern</th><th>Template Steps Summary</th></tr>
+    <tr><td>Config-Environment</td><td>Verify config → Compare envs → Update settings → Validate</td></tr>
+    <tr><td>Data Cleanup</td><td>Identify bad records → Correct data → Rerun process → Add validation</td></tr>
+    <tr><td>Null Handling</td><td>Reproduce null → Inspect upstream → Add guard/default → Regression test</td></tr>
+    <tr><td>Data Sync-Integration</td><td>Check sync status → Retry message → Remap entity → Validate E2E</td></tr>
+    <tr><td>Access-Authorization</td><td>Verify role/token → Check stale identities → Update access → Retest</td></tr>
+    <tr><td>Performance</td><td>Review logs → Identify slow step → Optimize → Re-measure</td></tr>
+    <tr><td>Job-Workflow-Pipeline</td><td>Check scheduler → Rerun step → Validate output → Add monitoring</td></tr>
+    <tr><td>UI-Frontend</td><td>Reproduce → Check API → Fix component → Verify UI</td></tr>
+    <tr><td>Deployment/Version</td><td>Confirm version → Check release notes → Deploy/rollback → Validate</td></tr>
+    <tr><td>External Dependency</td><td>Confirm origin → Engage owner → Apply workaround → Validate E2E</td></tr>
+    <tr><td>Logic Correction</td><td>Reproduce → Trace rule → Correct logic → Add test</td></tr>
+    <tr><td>Unknown</td><td>Triage from similar defects → Reproduce → Apply closest fix → Escalate</td></tr>
+  </table>
+
+  <h3>11.3 Streaming</h3>
+  <p>
+    <code>stream_diagnostic_answer()</code> yields tokens incrementally via LLM streaming.
+    The deterministic fallback emulates streaming by chunking its full text into 6-word groups.
+  </p>
+
+  <h3>11.4 Section Filtering</h3>
+  <p>
+    When the user selects specific sections via the options picker (e.g. only "root_cause"),
+    <code>_keep_sections()</code> parses the LLM's markdown output and retains only the
+    requested <code>## Heading</code> blocks, discarding unwanted sections.
+  </p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="defect-qa">
+  <h2>12. QA Orchestrator (<code>chatbot/defect_qa.py</code>)</h2>
+  <p>
+    Top-level orchestrator that ties intent routing, retrieval, synthesis, and documentation
+    RAG fusion into a single flow. Provides both <code>ask()</code> (sync) and
+    <code>ask_stream()</code> (SSE generator).
+  </p>
+
+  <h3>12.1 Two-Phase Interaction (Options Flow)</h3>
+  <p>For defect-family questions, the system uses a two-phase flow:</p>
+  <ol>
+    <li><strong>Phase 1 (no sections):</strong> Returns an <code>options</code> response with a section picker:
+      <ul>
+        <li><em>Root cause</em> — Most likely cause(s) from similar defects</li>
+        <li><em>How to resolve it</em> — Fix steps + documentation steps</li>
+        <li><em>Earlier similar defects</em> — Table of fixed defects with Jira keys</li>
+      </ul>
+    </li>
+    <li><strong>Phase 2 (with sections):</strong> Runs retrieval + synthesis only for the selected sections, reducing latency when the user wants only a subset.</li>
+  </ol>
+
+  <h3>12.2 Documentation RAG Fusion</h3>
+  <p>
+    When "resolve" is selected, the documentation RAG runs <strong>in parallel</strong> with
+    defect answer synthesis (via a background <code>ThreadPoolExecutor</code>):
+  </p>
+  <ol>
+    <li><code>build_doc_query()</code> — LLM reframes the defect symptom into a neutral documentation question.</li>
+    <li><code>ask_rag()</code> — In-process RAG pipeline queries the doc Qdrant collection.</li>
+    <li>Results are fused under labeled headers: "🗂️ From Historical Defects" and "📄 From Documentation".</li>
+    <li>If the doc RAG returns a "not found" answer, the sources block is stripped to avoid misleading citations.</li>
+  </ol>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="prompts">
+  <h2>13. Prompt Engineering (<code>chatbot/prompts.py</code>)</h2>
+
+  <h3>13.1 System Prompt (DIAGNOSTIC_SYSTEM_PROMPT)</h3>
+  <p>Key rules enforced:</p>
+  <ul>
+    <li>Use ONLY provided context — never invent keys, counts, owners, or dates.</li>
+    <li>Prefer fixed/resolved defects when recommending fixes.</li>
+    <li>NEVER reply "root cause not provided" — always commit to the most likely cause, citing evidence.</li>
+    <li>If the similar defects section is empty, explicitly state "no matching defect found" and ask for more detail.</li>
+    <li>Required output structure: Root Causes → Fix History → Suggested Steps → Similar Defects table.</li>
+  </ul>
+
+  <h3>13.2 User Prompt Construction</h3>
+  <p><code>build_user_prompt()</code> assembles a retrieval-scoped payload:</p>
+  <ul>
+    <li><strong>Conversation history</strong> (if provided) — last 4 turns, truncated to 600 chars each, for reference resolution.</li>
+    <li><strong>Question</strong> — the raw user question.</li>
+    <li><strong>Current defect</strong> (if key lookup) — full metadata for the specific defect.</li>
+    <li><strong>Retrieved similar defects</strong> — formatted evidence lines with key, status, relevance, root cause, fix.</li>
+    <li><strong>Structure hint</strong> — scoped to the selected sections (root_cause / resolve) or full default.</li>
+  </ul>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  KNOWLEDGE BASE PIPELINE                                      -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section id="kb-pipeline">
+  <h2>14. Knowledge Base Build Pipeline</h2>
+  <p>
+    Run with <code>python run_chatbot.py --build</code>. Executes four stages in sequence:
+  </p>
+
+  <h3>Stage 1–4: build_knowledge_base.py</h3>
+  <p>Loads three raw data files and normalizes them into an enriched knowledge base:</p>
+  <ul>
+    <li><strong>Input:</strong> <code>raw_defects.json</code> + <code>issue_comments.json</code> + <code>llm_analysis.json</code></li>
+    <li><strong>Process:</strong>
+      <ul>
+        <li>Normalize heterogeneous Jira/MCP field structures (top-level vs. nested <code>fields</code>).</li>
+        <li>Merge comments from the separate comments file.</li>
+        <li>Mask PII (emails, IPs, GUIDs, tokens, phone numbers).</li>
+        <li>Extract root cause: explicit Jira field → LLM analysis insight → resolution description → comment mining.</li>
+        <li>Extract fix applied: LLM analysis → resolution description → comment keyword search ("fixed", "resolved", "deployed").</li>
+        <li>Detect error signatures (HTTP 4xx/5xx, exceptions, timeouts, failures).</li>
+        <li>Classify <code>fix_pattern</code> (12 categories) via keyword scoring + LLM hints.</li>
+        <li>Classify <code>defect_type</code> (7 categories) via keyword scoring.</li>
+        <li>Compute <code>quality_score</code> (0–1 heuristic based on completeness).</li>
+        <li>Derive <code>is_fixed</code> and <code>is_cancelled</code> from status/resolution.</li>
+      </ul>
+    </li>
+    <li><strong>Output:</strong> <code>defect_knowledge_base.json</code> + <code>.csv</code> + <code>synonym_dictionary.json</code></li>
+  </ul>
+
+  <h3>Stage 5: build_chunks.py</h3>
+  <p>Each defect produces up to <strong>5 typed chunks</strong>:</p>
+  <table>
+    <tr><th>Chunk Type</th><th>Content</th><th>Purpose</th></tr>
+    <tr><td><code>problem_chunk</code></td><td>Summary + problem_text + symptom + error signature</td><td>Match symptom descriptions</td></tr>
+    <tr><td><code>root_cause_chunk</code></td><td>Root cause + raw cause + key findings</td><td>Match "why" questions</td></tr>
+    <tr><td><code>fix_chunk</code></td><td>Fix applied + workaround + resolution + solution</td><td>Match "how to fix" questions</td></tr>
+    <tr><td><code>comment_insight_chunk</code></td><td>Key findings + merged comment bodies</td><td>Match discussion-based evidence</td></tr>
+    <tr><td><code>full_context_chunk</code></td><td>All metadata combined</td><td>Broad catch-all for hybrid queries</td></tr>
+  </table>
+
+  <h3>Stage 6: build_embeddings.py</h3>
+  <p>
+    Embeds all chunks via <code>EmbeddingProvider</code> (Azure OpenAI preferred, sentence-transformers fallback).
+    Vectors are L2-normalized for cosine similarity. Outputs <code>embeddings.npy</code> + <code>embedding_metadata.json</code>.
+  </p>
+
+  <h3>Stage 7: migrate_defects_qdrant.py</h3>
+  <p>
+    Bulk upserts pre-computed chunks + embeddings into the Qdrant "defect" collection in batches of 200.
+    Point IDs are deterministic SHA-256 hashes of <code>chunk_id</code>, so re-running is idempotent.
+  </p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="schemas">
+  <h2>15. Data Schemas (<code>chatbot/schemas.py</code>)</h2>
+
+  <h3>15.1 DefectRecord (30+ fields)</h3>
+  <p>
+    Represents one enriched defect in the knowledge base. Key fields:
+  </p>
+  <table>
+    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+    <tr><td><code>issue_key</code></td><td>str</td><td>Jira key (e.g. HCBS-95506)</td></tr>
+    <tr><td><code>problem_text</code></td><td>str</td><td>Combined summary + description + symptoms (max 1200 chars)</td></tr>
+    <tr><td><code>root_cause_extracted</code></td><td>str</td><td>Best available root cause (max 400 chars)</td></tr>
+    <tr><td><code>fix_applied_extracted</code></td><td>str</td><td>Best available fix description (max 400 chars)</td></tr>
+    <tr><td><code>fix_pattern</code></td><td>str</td><td>One of 12 categories + "Unknown"</td></tr>
+    <tr><td><code>defect_type</code></td><td>str</td><td>One of 7 categories + "unknown"</td></tr>
+    <tr><td><code>quality_score</code></td><td>float</td><td>0.0–1.0 completeness heuristic</td></tr>
+    <tr><td><code>is_fixed</code></td><td>bool</td><td>Status ∈ {Fixed, Done, Closed, Resolved, Completed, Verified}</td></tr>
+    <tr><td><code>is_cancelled</code></td><td>bool</td><td>Status ∈ {Cancelled, Won't Do, Rejected, Duplicate, ...}</td></tr>
+  </table>
+
+  <h3>15.2 Fix Pattern Taxonomy (12 categories)</h3>
+  <p>
+    <code>Config-Environment</code>, <code>Data Cleanup</code>, <code>Null Handling</code>,
+    <code>Data Sync-Integration</code>, <code>Logic Correction</code>, <code>UI-Frontend</code>,
+    <code>Job-Workflow-Pipeline</code>, <code>Performance</code>, <code>Access-Authorization</code>,
+    <code>Workaround-Manual</code>, <code>Deployment/Version</code>, <code>External Dependency</code>,
+    <code>Unknown</code>.
+  </p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="build-chunks">
+  <h2>16. Chunking Strategy</h2>
+  <p>
+    Splitting each defect into <strong>5 aspect-typed chunks</strong> is a deliberate design choice:
+    a fix-oriented query like "how to fix EOM publish failure" will have a much higher cosine
+    similarity to the <code>fix_chunk</code> of a relevant defect than to its <code>problem_chunk</code>,
+    even when the problem text dominates the summary. Aspect-typed chunking prevents the
+    problem text from drowning out the fix evidence.
+  </p>
+  <p>
+    Each chunk carries full defect metadata (status, resolution, priority, components, labels,
+    fix_pattern, quality_score, is_fixed, is_cancelled) so the retriever can score metadata
+    overlap without a separate lookup.
+  </p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="build-embeddings">
+  <h2>17. Embedding Pipeline</h2>
+  <h3>17.1 EmbeddingProvider</h3>
+  <p>Unified embedding interface with automatic fallback:</p>
+  <ol>
+    <li><strong>Remote (preferred)</strong> — Uses <code>llm_provider.embed()</code> which routes to Azure OpenAI or GitHub Models depending on <code>EMBED_PROVIDER</code>. Dimension: 3072 (text-embedding-3-large).</li>
+    <li><strong>Local (fallback)</strong> — <code>sentence-transformers/all-MiniLM-L6-v2</code>. Dimension: 384. Requires PyTorch. Only used when remote is unavailable.</li>
+  </ol>
+  <p>All vectors are L2-normalized so inner-product search yields cosine similarity.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="vector-store-defect">
+  <h2>18. Defect Vector Store (<code>chatbot/defect_vector_store.py</code>)</h2>
+  <p>
+    Qdrant-backed store for the defect collection. Uses the same Qdrant cluster as the
+    document RAG but a <strong>separate collection</strong> (<code>"defect"</code>).
+  </p>
+
+  <h3>18.1 Indexes Created</h3>
+  <table>
+    <tr><th>Index Type</th><th>Fields</th></tr>
+    <tr><td>KEYWORD</td><td>issue_key, chunk_type, status, priority, resolution, fix_pattern, defect_type, components, labels, product, team, environment</td></tr>
+    <tr><td>BOOL</td><td>is_fixed, is_cancelled</td></tr>
+    <tr><td>TEXT (full-text)</td><td>text (word tokenizer, lowercase, min 2 / max 25 chars)</td></tr>
+  </table>
+
+  <h3>18.2 Idempotent Upserts</h3>
+  <p>Point IDs are deterministic UUIDs derived from SHA-256 of <code>chunk_id</code>, so re-adding
+     the same defect overwrites rather than duplicates. Before re-adding a defect,
+     <code>delete_by_issue_key()</code> removes all existing chunks for that key.</p>
+
+  <h3>18.3 Named Vector Detection</h3>
+  <p><code>_detect_vector_name()</code> handles Qdrant clusters that auto-assign a name to the
+     default vector (e.g. "defect-vector") vs. those that leave it unnamed. This is detected
+     once at startup so upsert/search calls address the correct field on any cluster.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="defect-ingest">
+  <h2>19. On-Demand Defect Ingestion (<code>chatbot/defect_ingest.py</code>)</h2>
+  <p>
+    Allows adding new defects to the knowledge base at runtime without a full rebuild.
+    Two modes:
+  </p>
+
+  <h3>19.1 Single Defect (<code>add_defect(issue_key)</code>)</h3>
+  <ol>
+    <li>Fetch issue + comments via Jira Cloud REST API v3.</li>
+    <li>Convert ADF (Atlassian Document Format) to plain text.</li>
+    <li>Normalize with the same <code>_normalize_defect()</code> pipeline as the bulk build.</li>
+    <li>Chunk into 5 typed chunks.</li>
+    <li>Embed via the shared <code>EmbeddingProvider</code>.</li>
+    <li>Delete existing chunks for this key (idempotent update).</li>
+    <li>Upsert new chunks into Qdrant.</li>
+    <li>Update local KB in-memory + BM25 IDF table.</li>
+  </ol>
+
+  <h3>19.2 Bulk JQL (<code>add_defects_by_jql(jql)</code>)</h3>
+  <p>
+    Same pipeline but runs a JQL search first (paginated via <code>nextPageToken</code>).
+    Comments come embedded in <code>fields.comment.comments</code> instead of separate API calls.
+    Capped at <code>JQL_ADD_MAX_RESULTS</code> defects per request. Both modes have SSE streaming
+    variants for real-time progress.
+  </p>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  DOCUMENT RAG                                                  -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section id="rag-overview">
+  <h2>20. Document RAG Pipeline</h2>
+  <p>
+    A self-contained <strong>in-process</strong> RAG pipeline extracted from a separate project.
+    Answers "how to" and configuration questions from product documentation (PDFs).
+    Uses a separate Qdrant collection (<code>"rag_collection"</code>) on the same cluster.
+  </p>
+
+  <div class="callout info">
+    <strong>Key design:</strong> The document RAG runs in-process (no separate HTTP server required).
+    Originally it was queried over HTTP; it now shares the same Python process as the defect chatbot.
+    All failures degrade gracefully — the defect answer is always returned, with or without
+    the documentation section.
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="rag-pipeline">
+  <h2>21. RAG Pipeline Architecture (<code>rag_docs/pipeline.py</code>)</h2>
+  <p>Wires together four components as a lazy singleton:</p>
+  <pre><code>VectorStore  →  AnswerGenerator  →  QueryEnhancer  →  RAGAgent
+                                                            ↑
+                                                     QueryRouter</code></pre>
+  <p>
+    <code>get_agent()</code> builds the pipeline on first call and caches it. Construction
+    validates that all required env vars are present for the selected provider.
+  </p>
+
+  <h3>21.1 Provider Selection</h3>
+  <p>
+    Controlled by <code>RAG_LLM_PROVIDER</code> and <code>RAG_EMBED_PROVIDER</code> independently,
+    allowing chat on Copilot and embeddings on GitHub Models (Copilot lacks 3072-dim embeddings).
+  </p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="rag-document-ingestor">
+  <h2>22. Document Ingestor (<code>rag_docs/document_ingestor.py</code>)</h2>
+  <p>Stage 1: PDF → structured elements via <strong>LlamaParse</strong> (cloud API).</p>
+  <ul>
+    <li>Parses each PDF page into Markdown, splitting into interleaved TEXT and TABLE elements.</li>
+    <li>Tracks section context (H1/H2/H3 headings) across pages.</li>
+    <li>Strips Markdown image references, preserving alt-text content.</li>
+    <li>Adds preceding/following text snippets (400 chars) for table context.</li>
+    <li>Handles corporate SSL proxy bypass internally.</li>
+  </ul>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="rag-semantic-chunker">
+  <h2>23. Semantic Chunker (<code>rag_docs/semantic_chunker.py</code>)</h2>
+  <p>Stage 2: elements → enriched, sequence-stamped chunks.</p>
+
+  <h3>23.1 TEXT Chunking</h3>
+  <ul>
+    <li>Split on Markdown headings (#, ##, ###) via <code>MarkdownHeaderTextSplitter</code>.</li>
+    <li>Sections ≤ 3500 chars → single <code>section_full</code> chunk.</li>
+    <li>Larger sections → <code>section_part</code> chunks via <code>RecursiveCharacterTextSplitter</code> (1200 chars, 200 overlap).</li>
+    <li>Table-of-Contents entries and page headers are filtered out.</li>
+  </ul>
+
+  <h3>23.2 TABLE Chunking (3 representations)</h3>
+  <table>
+    <tr><th>Chunk Type</th><th>Description</th></tr>
+    <tr><td><code>TABLE_FRAGMENT</code></td><td>One chunk per page-level fragment (raw Markdown)</td></tr>
+    <tr><td><code>TABLE_ROW</code></td><td>One chunk per data row (natural-language embedding text)</td></tr>
+    <tr><td><code>TABLE_FULL</code></td><td>One chunk per reconstructed full table (multi-page merge)</td></tr>
+  </table>
+
+  <h3>23.3 Context Enrichment</h3>
+  <p>Every chunk carries: <code>heading_h1</code>, <code>heading_h2</code>, <code>heading_h3</code>,
+     <code>section_title</code>, <code>parent_path</code>, <code>sequence_id</code> (global ordering).</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="rag-query-router">
+  <h2>24. Query Router (<code>rag_docs/query_router.py</code>)</h2>
+  <p>Lightweight regex-based classifier with 6 routes:</p>
+  <table>
+    <tr><th>Route</th><th>Trigger</th><th>Retrieval Strategy</th></tr>
+    <tr><td><code>feature_flag_table</code></td><td>"feature flag", "org level", "site level"</td><td>Filtered table search on TABLE_ROW / feature_flags</td></tr>
+    <tr><td><code>widget_matrix</code></td><td>"energy widget", "carbon widget", condition mentions</td><td>Exact condition filter on 4 matrix columns</td></tr>
+    <tr><td><code>text_section</code></td><td>"how to", "steps", "explain", "configure"</td><td>Similarity search filtered to TEXT chunks only</td></tr>
+    <tr><td><code>table_full</code></td><td>"full table", "all rows", "summarize table"</td><td>Full table retrieval intent</td></tr>
+    <tr><td><code>hybrid</code></td><td>Fallback / everything else</td><td>Similarity search across all chunk types</td></tr>
+  </table>
+  <p>For <code>widget_matrix</code>, the router extracts explicit condition values
+     (user_feature_flag, coexist_feature_flag, energy_default_baseline, eo_default_baseline)
+     from the query text.</p>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="rag-agent">
+  <h2>25. RAG Agent (<code>rag_docs/rag_agent.py</code>)</h2>
+  <p>Orchestrates a 9-stage query-time pipeline:</p>
+  <table>
+    <tr><th>Stage</th><th>Component</th><th>Action</th></tr>
+    <tr><td>1. Normalize</td><td><code>QueryNormalizer</code></td><td>Strip filler, expand contractions</td></tr>
+    <tr><td>2. Route</td><td><code>QueryRouter</code></td><td>Classify intent, extract widget conditions</td></tr>
+    <tr><td>3. Rewrite</td><td><code>QueryEnhancer</code></td><td>LLM rewrites query for retrieval optimization</td></tr>
+    <tr><td>4. Variants</td><td><code>QueryEnhancer</code></td><td>Generate N diverse paraphrases (multi-query)</td></tr>
+    <tr><td>5. Retrieve</td><td><code>VectorStore</code></td><td>Route-specific vector search + dedup</td></tr>
+    <tr><td>6. Expand</td><td><code>VectorStore</code></td><td>Fetch ±1 sequence neighbors for TABLE_ROW</td></tr>
+    <tr><td>7. Generate</td><td><code>AnswerGenerator</code></td><td>GPT-4o produces grounded, cited answer</td></tr>
+    <tr><td>8. Validate</td><td>Widget check</td><td>Lightweight value check; regenerate if wrong</td></tr>
+    <tr><td>9. Fallback</td><td><code>FallbackHandler</code></td><td>Honest message when confidence is too low</td></tr>
+  </table>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="rag-client">
+  <h2>26. RAG Client Bridge (<code>chatbot/rag_client.py</code>)</h2>
+  <p>
+    In-process bridge between the defect chatbot and the document RAG pipeline.
+    Key features:
+  </p>
+  <ul>
+    <li><strong>Query bridge:</strong> <code>build_doc_query()</code> uses a "cheap" LLM call to reframe a defect symptom into a neutral documentation question (removes "error", "bug", "fail" terminology that retrieves poorly against user guides).</li>
+    <li><strong>Timeout safety:</strong> Runs under a <code>ThreadPoolExecutor</code> with a hard <code>RAG_TIMEOUT</code> (120s default). If exceeded, the defect answer is returned without the documentation section.</li>
+    <li><strong>"No answer" checkpoint:</strong> Detects when the RAG says "does not specify/contain/mention" and strips the misleading sources block, replacing with a clean "not found" message.</li>
+    <li><strong>Graceful degradation:</strong> All failures return <code>None</code> — the defect chatbot always works from its own evidence.</li>
+  </ul>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  FRONTEND                                                      -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section id="frontend-overview">
+  <h2>27. Frontend Architecture</h2>
+  <p>
+    React 18 + TypeScript SPA built with Vite and styled with TailwindCSS. In development,
+    Vite proxies <code>/api</code> and <code>/health</code> to the backend on port 5000.
+    In production, the built SPA is served by FastAPI itself (same origin).
+  </p>
+
+  <h3>27.1 Component Hierarchy</h3>
+  <pre><code>App
+├── QueryClientProvider (React Query)
+├── ThemeProvider (dark/light mode)
+├── BrowserRouter
+└── ChatProvider (all chat state)
+    └── AppRoutes
+        ├── LandingPage → capabilities overview
+        └── ChatPage
+            └── ChatLayout
+                └── ChatWindow
+                    ├── EmptyState (no messages)
+                    ├── Message list (ChatMessage[])
+                    │   ├── User message
+                    │   ├── Assistant message
+                    │   │   ├── Markdown renderer
+                    │   │   ├── Options picker (defect sections)
+                    │   │   ├── Source panel (similar defects)
+                    │   │   └── Typing indicator
+                    │   └── Error message
+                    └── ChatInput (text area + controls)</code></pre>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="frontend-state">
+  <h2>28. State Management (<code>ChatProvider.tsx</code>)</h2>
+  <p>
+    All chat state is managed via React Context in <code>ChatProvider</code>.
+    Core features:
+  </p>
+  <ul>
+    <li><strong>Multi-conversation support:</strong> Create, delete, rename, pin conversations. Each conversation has its own message history and context.</li>
+    <li><strong>LocalStorage persistence:</strong> Conversations are debounce-saved (250ms) to localStorage so chat history survives page reloads.</li>
+    <li><strong>Streaming engine:</strong> <code>runStream()</code> manages the SSE lifecycle — opening the connection, buffering tokens, handling options/sources/errors, and closing cleanly.</li>
+    <li><strong>Options flow:</strong> When the backend returns an <code>options</code> event, the provider renders the section picker. When the user submits selections, <code>submitOptions()</code> re-sends the original question with the chosen sections.</li>
+    <li><strong>Abort support:</strong> <code>AbortController</code> allows canceling in-flight streams.</li>
+    <li><strong>Regenerate:</strong> Replays the original question + sections for any assistant message.</li>
+    <li><strong>History turns:</strong> Last 8 <code>{question, answer}</code> turns are kept per conversation for backend context resolution.</li>
+  </ul>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="frontend-api">
+  <h2>29. API Service Layer (<code>services/api.ts</code>)</h2>
+  <p>
+    Same-origin API client using the Fetch API directly (no Axios dependency).
+    Key functions:
+  </p>
+  <table>
+    <tr><th>Function</th><th>Endpoint</th><th>Returns</th></tr>
+    <tr><td><code>fetchHealth()</code></td><td><code>GET /health</code></td><td><code>HealthStatus | null</code></td></tr>
+    <tr><td><code>askStream()</code></td><td><code>POST /api/ask/stream</code></td><td>SSE event handlers (returns abort function)</td></tr>
+    <tr><td><code>ingestPdf()</code></td><td><code>POST /api/rag/ingest</code></td><td><code>IngestResult</code></td></tr>
+    <tr><td><code>ingestPdfStream()</code></td><td><code>POST /api/rag/ingest/stream</code></td><td>SSE progress events</td></tr>
+    <tr><td><code>addDefectStream()</code></td><td><code>POST /api/defects/add/stream</code></td><td>SSE progress events</td></tr>
+    <tr><td><code>addDefectsByJqlStream()</code></td><td><code>POST /api/defects/add-jql/stream</code></td><td>SSE progress events</td></tr>
+  </table>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="frontend-streaming">
+  <h2>30. SSE Streaming Implementation</h2>
+  <p>
+    A shared <code>consumeSSE&lt;T&gt;()</code> function reads the response body as a stream,
+    buffering bytes and splitting on double-newline SSE frame separators. Each <code>data:</code>
+    line is JSON-parsed and dispatched to the <code>onEvent</code> callback. Malformed frames
+    are silently ignored (defensive coding for partial/corrupted network reads).
+  </p>
+  <pre><code>// SSE consumption loop (simplified)
+while (true) {
+  const { value, done } = await reader.read();
+  if (done) break;
+  buffer += decoder.decode(value, { stream: true });
+  // Split on "\n\n" (SSE frame separator)
+  while ((sep = buffer.indexOf("\n\n")) !== -1) {
+    const frame = buffer.slice(0, sep);
+    buffer = buffer.slice(sep + 2);
+    const dataLine = frame.split("\n").find(l => l.startsWith("data:"));
+    onEvent(JSON.parse(dataLine.slice(5).trim()));
+  }
+}</code></pre>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════ -->
+<!--  SECURITY & OPS                                                -->
+<!-- ═══════════════════════════════════════════════════════════════ -->
+
+<section id="security">
+  <h2>31. Security Review</h2>
+
+  <h3>31.1 Strengths</h3>
+  <div class="callout good">
+    <ul>
+      <li><strong>Secrets externalized:</strong> All API keys/tokens loaded from <code>.env</code> via <code>python-dotenv</code>. Never hardcoded or committed.</li>
+      <li><strong>Read-only mode:</strong> <code>READ_ONLY_MODE = True</code> is hardcoded — no Jira writes possible.</li>
+      <li><strong>PII masking:</strong> Comprehensive regex-based masking of emails, phone numbers, IP addresses, GUIDs, URLs, Jira mentions, and long opaque tokens. Jira keys are explicitly preserved.</li>
+      <li><strong>Input validation:</strong> Question length capped at 2000 chars. PDF uploads validated (extension, size, non-empty). JQL length capped at 2000 chars. Pydantic models enforce field constraints.</li>
+      <li><strong>Parameterized queries:</strong> All Jira API calls use parameterized JSON bodies via <code>httpx</code> — no string concatenation for JQL.</li>
+      <li><strong>Error handling:</strong> LLM/Qdrant/Jira failures degrade gracefully — never crash, always return a usable response. Internal error details are not leaked to users (generic <code>Internal error</code> message).</li>
+      <li><strong>Deterministic UUID point IDs:</strong> SHA-256 content hashing prevents duplicate vectors in Qdrant.</li>
+    </ul>
+  </div>
+
+  <h3>31.2 Observations &amp; Recommendations</h3>
+  <div class="callout warn">
+    <ul>
+      <li><strong>CORS <code>allow_origins=["*"]</code>:</strong> Currently wide-open. Safe in the single-origin Render deployment but should be restricted if the API is ever exposed independently. Recommended: list specific allowed origins.</li>
+      <li><strong>SSL verification disabled:</strong> <code>verify=False</code> on all <code>httpx</code> and <code>QdrantClient</code> connections. This is a deliberate workaround for the corporate SSL inspection proxy (Zscaler). Acceptable in the corporate environment but should be documented as a known security tradeoff.</li>
+      <li><strong><code>ssl._create_default_https_context</code> monkey-patch:</strong> <code>pipeline.py</code> globally disables SSL verification. This is necessary for the corporate proxy but should be removed when deploying outside the corporate network.</li>
+      <li><strong>No rate limiting:</strong> The API has no request rate limiting beyond the LLM provider's own limits. Consider adding middleware rate limiting for production.</li>
+      <li><strong>No authentication:</strong> All API endpoints are publicly accessible. Consider adding API key authentication for non-health endpoints.</li>
+      <li><strong>File upload path traversal:</strong> The SPA catch-all route uses <code>os.path.normpath</code> + <code>startswith(STATIC_DIR)</code> to prevent path traversal — this is correctly implemented.</li>
+      <li><strong>LLM prompt injection:</strong> The system prompt includes strong grounding rules ("use ONLY provided context") which mitigates casual prompt injection. However, adversarial inputs via the <code>question</code> field are not specifically filtered.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="deployment">
+  <h2>32. Deployment</h2>
+
+  <h3>32.1 Render (Free Tier, Production)</h3>
+  <p>Defined in <code>render.yaml</code> as a single Web Service:</p>
+  <table>
+    <tr><th>Setting</th><th>Value</th></tr>
+    <tr><td>Runtime</td><td>Python (native, not Docker)</td></tr>
+    <tr><td>Python version</td><td>3.12.10</td></tr>
+    <tr><td>Region</td><td>Oregon</td></tr>
+    <tr><td>Root directory</td><td><code>backend/</code></td></tr>
+    <tr><td>Build command</td><td><code>pip install -r requirements-deploy.txt</code></td></tr>
+    <tr><td>Start command</td><td><code>uvicorn api.app:app --host 0.0.0.0 --port $PORT</code></td></tr>
+    <tr><td>Health check</td><td><code>/health</code></td></tr>
+    <tr><td>Auto-deploy</td><td>Yes (on push)</td></tr>
+  </table>
+
+  <div class="callout info">
+    <strong>Why native Python, not Docker?</strong> Render's Docker runtime requires a verified
+    payment method even for free instances. The native Python runtime does not. Because the native
+    runtime has no Node/npm, the frontend is pre-built locally and committed to
+    <code>backend/api/static/</code>.
+  </div>
+
+  <h3>32.2 Frontend Build &amp; Deploy Workflow</h3>
+  <pre><code>cd frontend
+npm run build              # Outputs to ../backend/api/static/
+git add ../backend/api/static
+git commit -m "Rebuild frontend"
+git push                   # Triggers auto-deploy on Render</code></pre>
+
+  <h3>32.3 Docker (Optional)</h3>
+  <p>
+    A <code>Dockerfile</code> is included as an alternative for paid Render plans or other
+    container hosts. It builds the frontend automatically (multi-stage build with Node + Python),
+    eliminating the manual <code>npm run build</code> + commit step.
+  </p>
+
+  <h3>32.4 Local Development</h3>
+  <pre><code># Backend
+cd backend
+python -m venv ../.venv
+../.venv/Scripts/pip install -r requirements.txt
+../.venv/Scripts/python run_chatbot.py --serve   # Starts on port 5000
+
+# Frontend (separate terminal)
+cd frontend
+npm install
+npm run dev                # Vite dev server on port 5173, proxies /api → :5000</code></pre>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="env-vars">
+  <h2>33. Environment Variables Reference</h2>
+  <table>
+    <tr><th>Variable</th><th>Required</th><th>Description</th></tr>
+    <tr><td colspan="3" style="background:#e2ecf6;font-weight:600;">Jira</td></tr>
+    <tr><td><code>JIRA_URL</code></td><td>Yes</td><td>Jira Cloud base URL</td></tr>
+    <tr><td><code>JIRA_USERNAME</code></td><td>Yes</td><td>Jira user email</td></tr>
+    <tr><td><code>JIRA_API_TOKEN</code></td><td>Yes</td><td>Jira API token</td></tr>
+    <tr><td colspan="3" style="background:#e2ecf6;font-weight:600;">Azure OpenAI</td></tr>
+    <tr><td><code>AZURE_OPENAI_ENDPOINT</code></td><td>If provider=azure</td><td>Azure OpenAI resource URL</td></tr>
+    <tr><td><code>AZURE_OPENAI_API_KEY</code></td><td>If provider=azure</td><td>Azure OpenAI API key</td></tr>
+    <tr><td><code>AZURE_OPENAI_DEPLOYMENT</code></td><td>If provider=azure</td><td>Default deployment name</td></tr>
+    <tr><td><code>AZURE_OPENAI_CHAT_DEPLOYMENT</code></td><td>Optional</td><td>Chat-specific deployment (overrides default)</td></tr>
+    <tr><td><code>AZURE_OPENAI_EMBEDDING_DEPLOYMENT</code></td><td>Optional</td><td>Embedding deployment name</td></tr>
+    <tr><td colspan="3" style="background:#e2ecf6;font-weight:600;">LLM Provider</td></tr>
+    <tr><td><code>LLM_PROVIDER</code></td><td>No</td><td>Chat provider: azure | github | copilot</td></tr>
+    <tr><td><code>EMBED_PROVIDER</code></td><td>No</td><td>Embedding provider (can differ from chat)</td></tr>
+    <tr><td><code>GITHUB_TOKEN</code></td><td>If provider=github</td><td>GitHub PAT for Models endpoint</td></tr>
+    <tr><td><code>COPILOT_TOKEN</code></td><td>If provider=copilot</td><td>GitHub Copilot API token</td></tr>
+    <tr><td colspan="3" style="background:#e2ecf6;font-weight:600;">Qdrant</td></tr>
+    <tr><td><code>QDRANT_URL</code></td><td>Yes</td><td>Qdrant Cloud cluster URL</td></tr>
+    <tr><td><code>QDRANT_API_KEY</code></td><td>Yes</td><td>Qdrant Cloud API key</td></tr>
+    <tr><td><code>QDRANT_COLLECTION</code></td><td>No</td><td>Doc RAG collection name (default: rag_collection)</td></tr>
+    <tr><td><code>DEFECT_QDRANT_COLLECTION</code></td><td>No</td><td>Defect collection name (default: defect)</td></tr>
+    <tr><td colspan="3" style="background:#e2ecf6;font-weight:600;">RAG Pipeline</td></tr>
+    <tr><td><code>USE_RAG_DOCS</code></td><td>No</td><td>Enable documentation RAG (default: true)</td></tr>
+    <tr><td><code>RAG_LLM_PROVIDER</code></td><td>No</td><td>Doc RAG chat provider</td></tr>
+    <tr><td><code>RAG_EMBED_PROVIDER</code></td><td>No</td><td>Doc RAG embedding provider</td></tr>
+    <tr><td><code>LLAMA_CLOUD_API_KEY</code></td><td>For PDF ingestion</td><td>LlamaParse API key</td></tr>
+    <tr><td colspan="3" style="background:#e2ecf6;font-weight:600;">Tuning</td></tr>
+    <tr><td><code>TOP_K_RESULTS</code></td><td>No</td><td>Max retrieved defects (default: 8)</td></tr>
+    <tr><td><code>RELEVANCE_MIN_SCORE</code></td><td>No</td><td>Absolute relevance floor (default: 0.45)</td></tr>
+    <tr><td><code>RELEVANCE_REL_MARGIN</code></td><td>No</td><td>Relative margin vs. top (default: 0.75)</td></tr>
+    <tr><td><code>MASK_SENSITIVE_DATA</code></td><td>No</td><td>Enable PII masking (default: true)</td></tr>
+  </table>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section id="observations">
+  <h2>34. Code Quality Observations</h2>
+
+  <h3>34.1 Architecture Strengths</h3>
+  <ul>
+    <li><strong>Separation of concerns:</strong> Clean layering — API routes → QA orchestrator → intent router → retriever → answer generator. Each module has a single responsibility.</li>
+    <li><strong>Provider agnosticism:</strong> The <code>llm_provider.py</code> abstraction allows switching between Azure/GitHub/Copilot backends with a single env var. No calling code changes needed.</li>
+    <li><strong>Graceful degradation:</strong> Every external dependency (LLM, Qdrant, Jira, RAG) has a fallback path. The system is always operational with some level of capability.</li>
+    <li><strong>Deterministic fallback:</strong> When the LLM is disabled or fails, the 12-category fix-step template system still produces useful, structured answers from retrieved metadata alone.</li>
+    <li><strong>Single-origin deployment:</strong> FastAPI serves both the API and the SPA from a single process, eliminating CORS complexity and proxy configuration.</li>
+    <li><strong>Idempotent operations:</strong> Content-hash point IDs for both Qdrant collections ensure safe re-runs of ingestion pipelines.</li>
+    <li><strong>Lazy initialization:</strong> Heavy components (LLM clients, Qdrant connections, embedding models) are loaded on first use and cached, so startup is fast and memory is allocated only when needed.</li>
+    <li><strong>Incremental updates:</strong> On-demand defect ingestion and PDF ingestion allow extending the knowledge base at runtime without rebuilding.</li>
+  </ul>
+
+  <h3>34.2 Code Quality Notes</h3>
+  <ul>
+    <li><strong>Typed dataclasses:</strong> <code>DefectRecord</code> and <code>DefectChunk</code> document the exact shape of data flowing between stages, with <code>asdict()</code> for JSON serialization.</li>
+    <li><strong>Comprehensive PII masking:</strong> 8+ regex patterns covering emails, phones, IPs, GUIDs, URLs, Jira mentions, opaque tokens, and Markdown images. Jira keys are explicitly protected from being masked.</li>
+    <li><strong>Well-documented modules:</strong> Every Python file has a detailed module docstring explaining purpose, behavior, and usage. Functions have type hints throughout.</li>
+    <li><strong>Functional frontend state:</strong> <code>ChatProvider</code> uses functional state updates (callbacks with <code>prev =&gt;</code>) to avoid stale closures — a common React pitfall handled correctly.</li>
+  </ul>
+
+  <h3>34.3 Potential Improvements</h3>
+  <table>
+    <tr><th>Area</th><th>Current State</th><th>Recommendation</th></tr>
+    <tr><td>Authentication</td><td>None (open API)</td><td>Add API key auth for non-health endpoints</td></tr>
+    <tr><td>Rate Limiting</td><td>None (relies on LLM limits)</td><td>Add FastAPI middleware rate limiter</td></tr>
+    <tr><td>CORS</td><td><code>allow_origins=["*"]</code></td><td>Restrict to specific origins in production</td></tr>
+    <tr><td>SSL Verification</td><td>Globally disabled</td><td>Make conditional on environment (corporate vs. public)</td></tr>
+    <tr><td>Logging</td><td>Print statements + logging module (mixed)</td><td>Standardize to structured logging (JSON)</td></tr>
+    <tr><td>Testing</td><td>No test files found</td><td>Add unit tests for intent router, retriever scoring, PII masking</td></tr>
+    <tr><td>Monitoring</td><td>Health endpoint only</td><td>Add Prometheus metrics (latency, token usage, error rates)</td></tr>
+    <tr><td>Caching</td><td>Singleton singletons, lru_cache for models</td><td>Consider Redis for cross-process caching in scaled deployments</td></tr>
+  </table>
+</section>
+
+<!-- ─────────────────────────────────────────────────────────────── -->
+<section>
+  <h2>35. Data Flow Summary</h2>
+  <div class="diagram-box">User Question
+    │
+    ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│ POST /api/ask/stream                                                │
+│                                                                       │
+│  1. Input validation (2000 char max)                                 │
+│  2. Intent classification (deterministic rules)                      │
+│     ├─ DEFECT_BY_KEY      → exact lookup + seed similar              │
+│     ├─ DEFECT_DIAGNOSTIC  → hybrid retrieval                         │
+│     ├─ SIMILAR_DEFECTS    → hybrid retrieval                         │
+│     └─ GENERAL_HELP       → static help text                        │
+│                                                                       │
+│  3. Options flow (first call: return section picker)                  │
+│  4. Section selection (second call with user picks)                   │
+│                                                                       │
+│  5. Hybrid Retrieval (retriever.py → Qdrant)                         │
+│     ├─ Semantic search (60 candidates, cosine similarity)            │
+│     ├─ Keyword search  (60 candidates, full-text index)              │
+│     ├─ BM25 re-scoring (in-memory IDF)                               │
+│     ├─ Metadata scoring (component/label/env overlap)                │
+│     ├─ Quality scoring  (pre-computed completeness)                  │
+│     ├─ Fixed boost      (+0.05 for resolved, −0.15 for cancelled)   │
+│     ├─ Defect-level aggregation (best chunk per issue)               │
+│     └─ Relevance filtering (absolute floor + relative margin)        │
+│                                                                       │
+│  6. Parallel: Documentation RAG (if "resolve" selected)              │
+│     ├─ build_doc_query() — LLM reframes symptom → doc question       │
+│     ├─ rag_docs pipeline — Qdrant search + GPT-4o synthesis          │
+│     └─ "No answer" checkpoint — strip misleading sources             │
+│                                                                       │
+│  7. Answer synthesis                                                  │
+│     ├─ LLM path: GPT-4o with grounding system prompt                │
+│     ├─ Deterministic fallback: template-based answer from metadata   │
+│     └─ Section filtering: keep only requested ## headings            │
+│                                                                       │
+│  8. Source attribution                                                │
+│     ├─ "🗂️ From Historical Defects"                                  │
+│     └─ "📄 From Documentation" (if available)                        │
+│                                                                       │
+│  9. Stream response (SSE events: meta → token* → sources → done)    │
+└─────────────────────────────────────────────────────────────────────┘
+    │
+    ▼
+Frontend ChatWindow (real-time rendering)</div>
+</section>
+
+</main>
+</div>
+
+<footer style="text-align:center; padding:1.5rem; border-top:1px solid var(--border); color:#888; font-size:0.82rem;">
+  CB-L1 Support Chatbot — Technical Documentation &nbsp;|&nbsp; Generated 2026-07-16 &nbsp;|&nbsp; Honeywell Connected Buildings
+</footer>
+
+</body>
+</html>
