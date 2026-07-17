@@ -5,7 +5,7 @@ import path from "node:path";
 /**
  * The production build is emitted straight into the FastAPI static directory so
  * `python run_chatbot.py --serve` ships the compiled SPA. During development,
- * `/api` and `/health` are proxied to the FastAPI server on :5000, preserving
+ * `/api` and `/health` are proxied to the FastAPI server on :5100, preserving
  * the exact same-origin contract used in production.
  */
 export default defineConfig({
@@ -18,8 +18,8 @@ export default defineConfig({
   server: {
     port: 5173,
     proxy: {
-      "/api": { target: "http://localhost:5000", changeOrigin: true },
-      "/health": { target: "http://localhost:5000", changeOrigin: true },
+      "/api": { target: "http://localhost:5100", changeOrigin: true },
+      "/health": { target: "http://localhost:5100", changeOrigin: true },
     },
   },
   build: {

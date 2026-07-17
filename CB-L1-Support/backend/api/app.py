@@ -5,7 +5,7 @@ Loads the knowledge base, FAISS index and embedding metadata once at startup
 
 Run with either:
     python run_chatbot.py --serve
-    uvicorn api.app:app --host 0.0.0.0 --port 5000
+    uvicorn api.app:app --host 0.0.0.0 --port 5100
 """
 
 from __future__ import annotations

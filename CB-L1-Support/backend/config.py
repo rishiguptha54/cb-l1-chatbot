@@ -163,7 +163,8 @@ MASK_SENSITIVE_DATA = _as_bool(os.getenv("MASK_SENSITIVE_DATA"), default=True)
 
 # ── API server ──
 SERVER_HOST = os.getenv("SERVER_HOST", "0.0.0.0")
-SERVER_PORT = int(os.getenv("SERVER_PORT", "5000"))
+# Prefer Render's injected PORT for cloud deploys; keep SERVER_PORT/local default for dev.
+SERVER_PORT = int(os.getenv("PORT", os.getenv("SERVER_PORT", "5100")))
 
 # URL the dashboard's chatbot button points to (the running chatbot UI).
 CHATBOT_URL = os.getenv("CHATBOT_URL", f"http://localhost:{SERVER_PORT}")

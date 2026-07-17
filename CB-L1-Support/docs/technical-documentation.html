@@ -1123,7 +1123,7 @@ model  = pick_model("complex") # → str (best available for stage)</code></pre>
   <h2>27. Frontend Architecture</h2>
   <p>
     React 18 + TypeScript SPA built with Vite and styled with TailwindCSS. In development,
-    Vite proxies <code>/api</code> and <code>/health</code> to the backend on port 5000.
+    Vite proxies <code>/api</code> and <code>/health</code> to the backend on port 5100.
     In production, the built SPA is served by FastAPI itself (same origin).
   </p>
 
@@ -1288,12 +1288,12 @@ git push                   # Triggers auto-deploy on Render</code></pre>
 cd backend
 python -m venv ../.venv
 ../.venv/Scripts/pip install -r requirements.txt
-../.venv/Scripts/python run_chatbot.py --serve   # Starts on port 5000
+../.venv/Scripts/python run_chatbot.py --serve   # Starts on port 5100
 
 # Frontend (separate terminal)
 cd frontend
 npm install
-npm run dev                # Vite dev server on port 5173, proxies /api → :5000</code></pre>
+npm run dev                # Vite dev server on port 5173, proxies /api → :5100</code></pre>
 </section>
 
 <!-- ─────────────────────────────────────────────────────────────── -->

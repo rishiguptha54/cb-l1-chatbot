@@ -28,7 +28,7 @@ npm install
 npm run dev
 ```
 
-The dev server proxies `/api` and `/health` to the backend on port 5000.
+The dev server proxies `/api` and `/health` to the backend on port 5100.
 
 ## Deploy to Render (free tier, no card required)
 

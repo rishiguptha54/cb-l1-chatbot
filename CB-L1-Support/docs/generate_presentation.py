@@ -557,7 +557,7 @@ bullet_list(s, Emu(int(cx2) + int(Inches(0.4))), Emu(int(cy) + int(Inches(0.95))
 
 code_block(s, MX, Inches(4.15), FULL_W, Inches(1.55), [
     "$ docker build -t cb-l1-support-chatbot:latest .",
-    "$ docker run -d -p 5000:10000 -v <path>.env:/app/.env:ro cb-l1-support-chatbot:latest",
+    "$ docker run -d -p 5100:10000 -v <path>.env:/app/.env:ro cb-l1-support-chatbot:latest",
 ])
 text(s, MX, Inches(5.9), FULL_W, Inches(0.5),
      [("Verified locally — health check confirms Qdrant + LLM + RAG reachable inside the container.", 12.5, GREEN, True, True)])

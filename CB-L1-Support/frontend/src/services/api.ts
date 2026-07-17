@@ -8,7 +8,7 @@ import type {
 
 /**
  * Same-origin API client. In development, Vite proxies `/api` and `/health` to
- * the FastAPI server on :5000 (see `vite.config.ts`); in production the compiled
+ * the FastAPI server on :5100 (see `vite.config.ts`); in production the compiled
  * SPA is served by FastAPI itself, so relative URLs resolve to the same origin.
  */
 const BASE = "";
