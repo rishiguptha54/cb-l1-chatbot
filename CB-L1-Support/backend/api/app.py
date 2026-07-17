@@ -12,7 +12,6 @@ Run with either:
 from __future__ import annotations
 
 import os
-from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -27,14 +26,7 @@ STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
 INDEX_HTML = os.path.join(STATIC_DIR, "index.html")
 
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Keep startup non-blocking on Render; expensive subsystem checks happen lazily.
-    print("[api] startup complete (lazy init enabled)")
-    yield
-
-
-app = FastAPI(title="CB L1 Support Chatbot", version="1.0.0", lifespan=lifespan)
+app = FastAPI(title="CB L1 Support Chatbot", version="1.0.0")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
