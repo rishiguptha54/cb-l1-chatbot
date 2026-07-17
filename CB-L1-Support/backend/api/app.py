@@ -1,7 +1,8 @@
 """FastAPI application factory for the CB L1 Support Chatbot.
 
-Loads the knowledge base, FAISS index and embedding metadata once at startup
-(not per request) so the first user query is fast.
+Starts quickly so cloud platforms can detect an open port. Heavy retriever and
+RAG client initialization is lazy (on first request) rather than blocking app
+startup.
 
 Run with either:
     python run_chatbot.py --serve
@@ -20,8 +21,6 @@ from fastapi.staticfiles import StaticFiles
 
 import config
 from api.routes import router
-from chatbot.retriever import get_retriever
-from chatbot import rag_client
 
 # Directory that holds the built React app (produced by `npm run build`).
 STATIC_DIR = os.path.join(os.path.dirname(__file__), "static")
@@ -30,19 +29,8 @@ INDEX_HTML = os.path.join(STATIC_DIR, "index.html")
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Warm the singletons so artifacts are loaded once at boot.
-    retr = get_retriever()
-    # Non-blocking reachability check for the external documentation RAG service.
-    if config.USE_RAG_DOCS:
-        rag_status = "reachable" if rag_client.rag_health() else "unreachable"
-    else:
-        rag_status = "off"
-    print(
-        f"[api] kb={len(retr.kb)} "
-        f"vector_store={'yes' if retr.ready else 'no'} "
-        f"llm={'on' if (config.USE_LLM and config.USE_AZURE_OPENAI) else 'off'} "
-        f"rag={rag_status}"
-    )
+    # Keep startup non-blocking on Render; expensive subsystem checks happen lazily.
+    print("[api] startup complete (lazy init enabled)")
     yield
 
 
